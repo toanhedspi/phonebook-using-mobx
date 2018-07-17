@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FlatList, Image, Platform, StyleSheet, Text, View } from 'react-native';
-import { ListItem } from 'react-native-elements'
+import { Header, ListItem } from 'react-native-elements'
 
 var datas = [
     {
@@ -35,7 +35,6 @@ export default class PhoneBookScreen extends Component {
     keyExtractor = (item, index) => item.numbers
 
     renderItem = ({ item }) => {
-        console.log(item.avatar_url)
         return (
             <ListItem
                 title={item.name}
@@ -51,8 +50,21 @@ export default class PhoneBookScreen extends Component {
     render() {
         return (
             <View style={{ flex: 1 }}>
+                <Header
+                    outerContainerStyles={{ backgroundColor: '#fff', borderBottomWidth: 3, marginTop: 10 }}
+                    leftComponent={
+                        <View style={{ flexDirection: 'row' }}>
+                            <Image
+                                source={require('../asset/science.png')}
+                                style={{ width: 30, height: 30 }}
+                            />
+                            <Text style={{ fontSize: 18, marginTop: 3 }}>PHONEBOOK</Text>
+                        </View>
+                    }
+                    rightComponent={{ icon: 'search', color: '#000' }}
+                />
                 <FlatList
-                    style={{ flex: 1, marginTop: 30 }}
+                    style={{ flex: 1 }}
                     data={datas}
                     keyExtractor={this.keyExtractor}
                     renderItem={this.renderItem}
