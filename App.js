@@ -8,25 +8,16 @@
 
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
-
+import { createStackNavigator } from 'react-navigation'
 import PhoneBookScreen from './src/components/PhoneBookScreen';
+import DetailScreen from './src/components/DetailScreen';
 
 type Props = {};
 
-class PhoneScreen extends Component {
-  render() {
-    return (
-      <Text>Testing outside</Text>
-    )
-  }
-}
+const App = createStackNavigator({
+  Home: { screen: PhoneBookScreen },
+  Details: { screen: DetailScreen },
+});
 
-export default class App extends Component<Props> {
-  render() {
-    return (
-        <PhoneBookScreen style={{flex: 1}}/>
-      
-    );
-  }
-}
+export default App;
 

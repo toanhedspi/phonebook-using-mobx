@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import { FlatList, Image, Platform, StyleSheet, Text, View } from 'react-native';
-import { Header, ListItem } from 'react-native-elements'
+import { Header, ListItem } from 'react-native-elements';
+import { createStackNavigator } from 'react-navigation';
+import { observer } from 'mobx-react/native'
+import PhoneBookStore from './../mobx/PhoneBookStore'
 
-var datas = [
+const datas = [
     {
         name: "s4",
         numbers: "0124453324",
@@ -30,10 +33,32 @@ var datas = [
     },
 ]
 
-export default class PhoneBookScreen extends Component {
+// console.log(typeof PhoneBookStore);
+// @observer
+class PhoneBookScreen extends Component {
+
+    static navigationOptions = {
+        header: <Header
+            outerContainerStyles={{ backgroundColor: '#fff', borderBottomWidth: 3,  paddingTop: 20, paddingBottom: 10, paddingLeft: 5  }}
+            innerContainerStyles={{}}
+            leftComponent={
+                <View style={{ flexDirection: 'row' , marginTop: 30}}>
+                    <Image
+                        source={require('../asset/science.png')}
+                        style={{ width: 30, height: 30 }}
+                    />
+                    <Text style={{ fontSize: 18, marginTop: 3 }}>PHONEBOOK</Text>
+                </View>
+            }
+            rightComponent={{ icon: 'search', color: '#000' }}
+        />
+    };
 
     keyExtractor = (item, index) => item.numbers
 
+    onClickItem = () => {
+        this.props.navigation.navigate('Details')
+    }
     renderItem = ({ item }) => {
         return (
             <ListItem
@@ -43,26 +68,16 @@ export default class PhoneBookScreen extends Component {
                     <Image source={{ uri: item.avatar_url }} style={{ borderRadius: 35, height: 70, width: 70 }} />
                 }
                 subtitle={item.numbers}
+                onPress={this.onClickItem}
             />
         )
     }
 
     render() {
+        // const datas = phoneBookStore.list.slice()
+
         return (
-            <View style={{ flex: 1 }}>
-                <Header
-                    outerContainerStyles={{ backgroundColor: '#fff', borderBottomWidth: 3, marginTop: 10 }}
-                    leftComponent={
-                        <View style={{ flexDirection: 'row' }}>
-                            <Image
-                                source={require('../asset/science.png')}
-                                style={{ width: 30, height: 30 }}
-                            />
-                            <Text style={{ fontSize: 18, marginTop: 3 }}>PHONEBOOK</Text>
-                        </View>
-                    }
-                    rightComponent={{ icon: 'search', color: '#000' }}
-                />
+            <View style={{ flex: 1 , backgroundColor: '#FFF'}}>               
                 <FlatList
                     style={{ flex: 1 }}
                     data={datas}
@@ -92,3 +107,5 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
 });
+
+export default PhoneBookScreen;
