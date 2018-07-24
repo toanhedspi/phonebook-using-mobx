@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { FlatList, Image, Button, Platform, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Image, Button, Platform, ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { Header, ListItem } from 'react-native-elements'
 import Swipeout from 'react-native-swipeout'
 import { observer } from 'mobx-react/native'
-import { toJS } from 'mobx';
+import { toJS, toJSON } from 'mobx';
 import { Observer } from 'mobx-react'
 import phoneBookStore from './../mobx/PhoneBookStore'
 
@@ -13,7 +13,9 @@ const PhoneBookScreen = observer(
         constructor(props) {
             super(props);
             this.onClickItem = this.onClickItem.bind(this)
-            this.state = { list: phoneBookStore.list};
+            this.state = { list: phoneBookStore.list, listApi: phoneBookStore.listApi, isLoading: phoneBookStore.isLoading, templist: [] };
+
+            phoneBookStore.getMoviesFromApi();
         }
         static navigationOptions = {
             header: <Header
@@ -28,43 +30,60 @@ const PhoneBookScreen = observer(
                         <Text style={{ fontSize: 18, marginTop: 3 }}>PHONEBOOK</Text>
                     </View>
                 }
-                rightComponent={{ icon: 'search', color: '#000', onPress: () => phoneBookStore.counter[0]++ }}
+                rightComponent={{
+                    icon: 'search',
+                    color: '#000',
+                    onPress: () => {
+
+                    }
+                }}
             />
         };
 
-        keyExtractor = (item, index) => item.numbers
+        getAPI = () => {
+            // console.log("adad");
+            return fetch('https://api.github.com/search/repositories?q=language:swift&per_page=5')
+                .then((res) => res.json())
+                .then((resJson) => console.log(resJson))
+                .catch((error) => {
+                    console.error(error);
+                });
+        }
 
-        onClickItem = ( index )  => {
-            // console.log(item);
-            this.props.navigation.navigate('Details', {index: index})
+
+        keyExtractor = (item, index) => item.id.toString()
+
+        onClickItem = (index) => {
+            this.props.navigation.navigate('Details', { index: index })
         }
 
         renderItem = ({ item }) => {
             const swipeSetting = {
-                style: {backgroundColor: '#FFF'},
+                style: { backgroundColor: '#FFF' },
                 autoClose: true,
                 right: [{
                     text: 'Delete',
                     onPress: () => {
-                        phoneBookStore.deleteItem(item.numbers);
+                        phoneBookStore.deleteItem(item.id);
                         this.setState({
-                            list: phoneBookStore.list
+                            listApi: phoneBookStore.listApi
                         });
                     }
                 }]
             }
             return (
-                
+
                 <Swipeout {...swipeSetting} >
                     <ListItem
                         title={item.name}
                         titleStyle={{ fontSize: 20, marginBottom: 7 }}
                         avatar={
-                            <Image source={{ uri: item.avatar_url }} style={{ borderRadius: 35, height: 70, width: 70 }} />
+                            <Image source={{ uri: item.owner.avatar_url }} style={{ borderRadius: 35, height: 70, width: 70 }} />
                         }
-                        subtitle={item.numbers}
+                        subtitle={item.id}
                         onPress={() => {
-                            index = toJS(phoneBookStore.list).findIndex(x => x.numbers == item.numbers)
+                            index = toJS(phoneBookStore.listApi).findIndex(x => x.id === item.id)
+                            console.log(index)
                             this.onClickItem(index)
                         }}
                     />
@@ -73,18 +92,30 @@ const PhoneBookScreen = observer(
         }
 
         render() {
+            console.log(this.state.listApi.length)
             const datas = phoneBookStore.list.slice();
- 
-            return (
-                <View style={{ flex: 1, backgroundColor: '#FFF' }}>
-                    <FlatList
-                        style={{ flex: 1 }}
-                        data={datas}
-                        keyExtractor={this.keyExtractor}
-                        renderItem={this.renderItem}
-                    />                    
-                </View>
-            )
+            if (this.state.isLoading[0] == 0)
+            // if (this.state.listApi.length == 0)
+                return (
+                    <View style ={{ flex: 1, backgroundColor: '#FFF', justifyContent: 'center' }}>
+                    <ActivityIndicator                   
+                        animating size="large" />
+                    </View>
+                )
+            else {
+                return (
+                    <View style={{ flex: 1, backgroundColor: '#FFF' }}>
+                        {/* <Button title="Click me" onPress={this.getAPI} /> */}
+                        <FlatList
+                            style={{ flex: 1 }}
+                            data={phoneBookStore.listApi}
+                            extraData={this.state}
+                            keyExtractor={this.keyExtractor}
+                            renderItem={this.renderItem}
+                        />
+                    </View>
+                )
+            }
         }
     }
 )

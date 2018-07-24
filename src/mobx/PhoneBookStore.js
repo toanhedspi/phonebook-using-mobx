@@ -1,7 +1,11 @@
 import { observable, action } from 'mobx'
 
 class PhoneBookStore {
-    counter = observable([9]);
+
+    isLoading = observable([0]);
+
+    listApi = observable([]);
+
     list = observable([
         {
             index: 0,
@@ -35,19 +39,27 @@ class PhoneBookStore {
         },
     ])
 
-    //   @action finishItem (index) {
-    //     const copiedList = this.list.slice()
-    //     const isFinished = copiedList[index].isFinished
-    //     if (isFinished) return
+    deleteItem = action((id) => {
+        this.listApi = this.listApi.filter(listItem => listItem.id != id);
+    })
 
-    //     copiedList[index].isFinished = true
-    //     this.list = copiedList // update store by re-assigning
-    //   }
+    async getMoviesFromApi() {
+        try {
+            let response = await fetch(
+                'https://api.github.com/search/repositories?q=language:swift&per_page=5'
+            );
+            let responseJson = await response.json();
+            
+            this.listApi = responseJson.items;
 
-      deleteItem = action((numbers) => {
-        this.list = this.list.filter(listItem => listItem.numbers != numbers);
-      })
+            this.isLoading[0] = 1;
+            console.log("Done");
+        } catch (error) {
+            console.error(error);
+        }
+    }
 }
 
 const phoneBookStore = new PhoneBookStore();
+
 export default phoneBookStore;
