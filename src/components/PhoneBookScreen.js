@@ -13,7 +13,7 @@ const PhoneBookScreen = observer(
         constructor(props) {
             super(props);
             this.onClickItem = this.onClickItem.bind(this)
-            this.state = { list: phoneBookStore.list, listApi: phoneBookStore.listApi, isLoading: phoneBookStore.isLoading, templist: [] };
+            this.state = { listApi: phoneBookStore.listApi };
 
             phoneBookStore.getMoviesFromApi();
         }
@@ -39,17 +39,6 @@ const PhoneBookScreen = observer(
                 }}
             />
         };
-
-        getAPI = () => {
-            // console.log("adad");
-            return fetch('https://api.github.com/search/repositories?q=language:swift&per_page=5')
-                .then((res) => res.json())
-                .then((resJson) => console.log(resJson))
-                .catch((error) => {
-                    console.error(error);
-                });
-        }
-
 
         keyExtractor = (item, index) => item.id.toString()
 
@@ -92,10 +81,8 @@ const PhoneBookScreen = observer(
         }
 
         render() {
-            console.log(this.state.listApi.length)
-            const datas = phoneBookStore.list.slice();
-            if (this.state.isLoading[0] == 0)
-            // if (this.state.listApi.length == 0)
+            const datas = this.props.screenProps
+            if (this.state.listApi.length == 0)
                 return (
                     <View style ={{ flex: 1, backgroundColor: '#FFF', justifyContent: 'center' }}>
                     <ActivityIndicator                   
@@ -108,7 +95,7 @@ const PhoneBookScreen = observer(
                         {/* <Button title="Click me" onPress={this.getAPI} /> */}
                         <FlatList
                             style={{ flex: 1 }}
-                            data={phoneBookStore.listApi}
+                            data={datas}
                             extraData={this.state}
                             keyExtractor={this.keyExtractor}
                             renderItem={this.renderItem}

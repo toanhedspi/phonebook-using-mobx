@@ -4,7 +4,7 @@ class PhoneBookStore {
 
     isLoading = observable([0]);
 
-    listApi = observable([]);
+    listApi = observable([])
 
     list = observable([
         {
@@ -50,8 +50,7 @@ class PhoneBookStore {
             );
             let responseJson = await response.json();
             
-            this.listApi = responseJson.items;
-
+            this.listApi.replace(responseJson.items);
             this.isLoading[0] = 1;
             console.log("Done");
         } catch (error) {

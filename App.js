@@ -23,10 +23,8 @@ const App = createStackNavigator({
 
 class MyApp extends Component {
   render() {
-    const screenProps = {phoneBookStore}
-    
     return (
-      <App screenProps={phoneBookStore} />
+      <App screenProps={phoneBookStore.listApi} />
     )
   }
 }

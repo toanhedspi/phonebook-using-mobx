@@ -18,7 +18,7 @@ export default class DetailScreen extends Component {
     render() {
         const { navigation } = this.props;
         const index = navigation.getParam('index', 'NO-ITEM');
-        const datas = phoneBookStore.listApi[index];
+        const itemData = phoneBookStore.listApi[index];
 
         console.log(phoneBookStore.listApi[index].id)
         return (
@@ -28,20 +28,20 @@ export default class DetailScreen extends Component {
 
                         xlarge
                         rounded
-                        source={{ uri: datas.owner.avatar_url }}
+                        source={{ uri: itemData.owner.avatar_url }}
                         activeOpacity={0.7}
                     />
-                    <Text style={{ marginTop: 20, marginBottom: 20, fontSize: 30 }}>{datas.name}</Text>
+                    <Text style={{ marginTop: 20, marginBottom: 20, fontSize: 30 }}>{itemData.name}</Text>
                     <View>
-                        <Text>{datas.id}</Text>
-                        <Text>info 1</Text>
-                        <Text>info 2</Text>
-                        <Text>info 3</Text>
-                        <Text>info 4</Text>
-                        <Text>info 1</Text>
-                        <Text>info 2</Text>
-                        <Text>info 3</Text>
-                        <Text>info 4</Text>
+                        <Text>{itemData.id}</Text>
+                        <Text>{itemData.node_id}</Text>
+                        <Text>{itemData.full_name}</Text>
+                        <Text>{itemData.owner.url}</Text>
+                        <Text>{itemData.owner.html_url}</Text>
+                        <Text>{itemData.owner.type}</Text>
+                        <Text>{itemData.description}</Text>
+                        <Text>{itemData.created_at}</Text>
+                        <Text>{itemData.language}</Text>
                     </View>
                 </View>
             </View>
