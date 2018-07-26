@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { FlatList, Image, Button, Platform, ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-import { Header, ListItem } from 'react-native-elements'
+import { FlatList, Image, TextInput, ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { Header, ListItem, Button } from 'react-native-elements'
 import Swipeout from 'react-native-swipeout'
 import { observer } from 'mobx-react/native'
-import { toJS, toJSON } from 'mobx';
-import { Observer } from 'mobx-react'
+import Modal from 'react-native-modal'
+import { toJS } from 'mobx';
 import phoneBookStore from './../mobx/PhoneBookStore'
 
 const PhoneBookScreen = observer(
@@ -13,7 +13,7 @@ const PhoneBookScreen = observer(
         constructor(props) {
             super(props);
             this.onClickItem = this.onClickItem.bind(this)
-            this.state = { listApi: phoneBookStore.listApi };
+            this.state = { listApi: phoneBookStore.listApi, modalVisible: false, modifiedItemID: 0 , modifiedName: '', modifiedNumber: '' };
 
             phoneBookStore.getMoviesFromApi();
         }
@@ -51,6 +51,15 @@ const PhoneBookScreen = observer(
                 style: { backgroundColor: '#FFF' },
                 autoClose: true,
                 right: [{
+                    text: 'Edit',
+                    backgroundColor: '#4d1300',
+                    onPress: () => {
+                        this.setState({
+                            modalVisible: true,
+                        });
+                    }
+                },
+                {
                     text: 'Delete',
                     onPress: () => {
                         phoneBookStore.deleteItem(item.id);
@@ -58,7 +67,8 @@ const PhoneBookScreen = observer(
                             listApi: phoneBookStore.listApi
                         });
                     }
-                }]
+                }],
+
             }
             return (
 
@@ -84,15 +94,63 @@ const PhoneBookScreen = observer(
             const datas = this.props.screenProps
             if (this.state.listApi.length == 0)
                 return (
-                    <View style ={{ flex: 1, backgroundColor: '#FFF', justifyContent: 'center' }}>
-                    <ActivityIndicator                   
-                        animating size="large" />
+                    <View style={{ flex: 1, backgroundColor: '#FFF', justifyContent: 'center' }}>
+                        <ActivityIndicator
+                            animating size="large" />
                     </View>
                 )
             else {
                 return (
                     <View style={{ flex: 1, backgroundColor: '#FFF' }}>
-                        {/* <Button title="Click me" onPress={this.getAPI} /> */}
+                        <Modal
+                            isVisible={this.state.modalVisible}
+                            style={{ flex: 1, alignSelf: 'center', width: '75%' }}
+                            onBackdropPress={() => this.setState({ modalVisible: false })}>
+
+                            <View style={{ height: '75%', backgroundColor: '#FFF', }}>
+                                <View style={{ flex: 1, paddingLeft: 20, paddingTop: 20, borderBottomColor: '#D3D3D3', borderBottomWidth: 1, width: '100%', }}>
+                                    <Text style={{ fontSize: 35 }}>Edit Row</Text>
+                                </View>
+                                <View style={{ flex: 5, marginTop: 20, alignItems: 'center', borderBottomColor: '#D3D3D3', borderBottomWidth: 1, }}>
+                                    <View style={{ width: '80%', marginBottom: 25 }}>
+                                        <Text style={{ color: 'green', fontSize: 18 }}>Name</Text>
+                                        <TextInput
+                                            style={{ height: 40, borderColor: 'green', borderWidth: 1, borderRadius: 5, paddingLeft: 10, marginTop: 10 }}
+                                            onChangeText={(text) => this.setState({ modifiedName: text })}
+                                            placeholder="some text"
+                                        />
+                                    </View>
+                                    <View style={{ width: '80%', marginBottom: 25 }}>
+                                        <Text style={{ color: 'green', fontSize: 18 }}>Numbers</Text>
+                                        <TextInput
+                                            style={{ height: 40, borderColor: 'green', borderWidth: 1, borderRadius: 5, paddingLeft: 10, marginTop: 10 }}
+                                            onChangeText={(text) => this.setState({ modifiedNumber: text })}
+                                            placeholder="some text"
+                                        />
+                                    </View>
+                                    <View style={{ width: '80%', marginBottom: 25 }}>
+                                        <Text style={{ color: 'green', fontSize: 18 }}>Avatar</Text>
+                                        <TextInput
+                                            style={{ height: 40, borderColor: 'green', borderWidth: 1, borderRadius: 5, paddingLeft: 10, marginTop: 10 }}
+                                            onChangeText={(text) => this.setState({ modifiedName: text })}
+                                            placeholder="some text"
+                                        />
+                                    </View>
+                                </View>
+                                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+
+                                    <Button
+                                        buttonStyle={{ backgroundColor: 'green' }}
+                                        title='Confirm change'
+                                        onPress={() => {
+                                            console.log(this.state.modifiedItemID)
+                                            phoneBookStore.modifiyItem(this.state.modifiedItemID, this.state.modifiedName, this.state.modifiedNumber)
+                                            this.setState({modalVisible: false})
+                                        }}
+                                    />
+                                </View>
+                            </View>
+                        </Modal>
                         <FlatList
                             style={{ flex: 1 }}
                             data={datas}

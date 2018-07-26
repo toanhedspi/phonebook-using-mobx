@@ -43,6 +43,13 @@ class PhoneBookStore {
         this.listApi = this.listApi.filter(listItem => listItem.id != id);
     })
 
+    modifiyItem = action((id, modifiedName, modifiedNumber) => {
+        if (modifiedName != '')
+            this.listApi[id].name = modifiedName;
+        if (modifiedNumber != '')
+            this.listApi[id].id = modifiedNumber;
+    })
+
     async getMoviesFromApi() {
         try {
             let response = await fetch(

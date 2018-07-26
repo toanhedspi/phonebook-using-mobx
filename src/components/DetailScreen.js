@@ -18,7 +18,7 @@ export default class DetailScreen extends Component {
     render() {
         const { navigation } = this.props;
         const index = navigation.getParam('index', 'NO-ITEM');
-        const itemData = phoneBookStore.listApi[index];
+        const itemData = this.props.screenProps[index];
 
         console.log(phoneBookStore.listApi[index].id)
         return (
