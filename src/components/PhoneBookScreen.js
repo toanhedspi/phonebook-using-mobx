@@ -13,7 +13,14 @@ const PhoneBookScreen = observer(
         constructor(props) {
             super(props);
             this.onClickItem = this.onClickItem.bind(this)
-            this.state = { listApi: phoneBookStore.listApi, modalVisible: false, modifiedItemID: 0 , modifiedName: '', modifiedNumber: '' };
+            this.state = { 
+                listApi: phoneBookStore.listApi, 
+                modalVisible: false, 
+                modifiedItemID: 0 , 
+                modifiedName: '', 
+                modifiedNumber: '', 
+                modifiedItemIndex: -1 
+            };
 
             phoneBookStore.getMoviesFromApi();
         }
@@ -46,7 +53,7 @@ const PhoneBookScreen = observer(
             this.props.navigation.navigate('Details', { index: index })
         }
 
-        renderItem = ({ item }) => {
+        renderItem = ({ item, index }) => {
             const swipeSetting = {
                 style: { backgroundColor: '#FFF' },
                 autoClose: true,
@@ -56,6 +63,7 @@ const PhoneBookScreen = observer(
                     onPress: () => {
                         this.setState({
                             modalVisible: true,
+                            modifiedItemIndex: index
                         });
                     }
                 },
@@ -71,7 +79,6 @@ const PhoneBookScreen = observer(
 
             }
             return (
-
                 <Swipeout {...swipeSetting} >
                     <ListItem
                         title={item.name}
@@ -81,8 +88,9 @@ const PhoneBookScreen = observer(
                         }
                         subtitle={item.id}
                         onPress={() => {
-                            index = toJS(phoneBookStore.listApi).findIndex(x => x.id === item.id)
-                            console.log(index)
+                            // console.log(index)
+                            // index = toJS(this.props.screenProps).findIndex(x => x.id === item.id)
+                            // console.log(index)
                             this.onClickItem(index)
                         }}
                     />
@@ -104,14 +112,14 @@ const PhoneBookScreen = observer(
                     <View style={{ flex: 1, backgroundColor: '#FFF' }}>
                         <Modal
                             isVisible={this.state.modalVisible}
-                            style={{ flex: 1, alignSelf: 'center', width: '75%' }}
+                            style={styles.modalStyle}
                             onBackdropPress={() => this.setState({ modalVisible: false })}>
 
                             <View style={{ height: '75%', backgroundColor: '#FFF', }}>
-                                <View style={{ flex: 1, paddingLeft: 20, paddingTop: 20, borderBottomColor: '#D3D3D3', borderBottomWidth: 1, width: '100%', }}>
+                                <View style={styles.modalStyleHeader}>
                                     <Text style={{ fontSize: 35 }}>Edit Row</Text>
                                 </View>
-                                <View style={{ flex: 5, marginTop: 20, alignItems: 'center', borderBottomColor: '#D3D3D3', borderBottomWidth: 1, }}>
+                                <View style={styles.modalStyleBody}>
                                     <View style={{ width: '80%', marginBottom: 25 }}>
                                         <Text style={{ color: 'green', fontSize: 18 }}>Name</Text>
                                         <TextInput
@@ -137,14 +145,14 @@ const PhoneBookScreen = observer(
                                         />
                                     </View>
                                 </View>
-                                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                <View style={styles.modalStyleFooter}>
 
                                     <Button
                                         buttonStyle={{ backgroundColor: 'green' }}
                                         title='Confirm change'
                                         onPress={() => {
-                                            console.log(this.state.modifiedItemID)
-                                            phoneBookStore.modifiyItem(this.state.modifiedItemID, this.state.modifiedName, this.state.modifiedNumber)
+                                            console.log(this.state.modifiedItemIndex)
+                                            phoneBookStore.modifiyItem(this.state.modifiedItemIndex, this.state.modifiedName, this.state.modifiedNumber)
                                             this.setState({modalVisible: false})
                                         }}
                                     />
@@ -165,6 +173,32 @@ const PhoneBookScreen = observer(
     }
 )
 const styles = StyleSheet.create({
+    modalStyle: {
+        flex: 1, 
+        alignSelf: 'center', 
+        width: '75%' 
+    },
+    modalStyleHeader: { 
+        flex: 1, 
+        paddingLeft: 20, 
+        paddingTop: 20, 
+        borderBottomColor: '#D3D3D3', 
+        borderBottomWidth: 1, 
+        width: '100%' 
+    },
+    modalStyleBody: { 
+        flex: 5, 
+        marginTop: 20, 
+        alignItems: 'center', 
+        borderBottomColor: '#D3D3D3', 
+        borderBottomWidth: 1
+    },
+    modalStyleFooter: { 
+        flex: 1, 
+        alignItems: 'center', 
+        justifyContent: 'center' 
+    }
+
 });
 
 export default PhoneBookScreen;

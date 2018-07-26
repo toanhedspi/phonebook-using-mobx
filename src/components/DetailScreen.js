@@ -23,7 +23,7 @@ export default class DetailScreen extends Component {
         console.log(phoneBookStore.listApi[index].id)
         return (
             <View style={{ flex: 1 }}>
-                <View style={{ flex: 1, backgroundColor: "#FFF", justifyContent: 'center', alignItems: 'center' }}>
+                <View style={styles.detailStyle}>
                     <Avatar
 
                         xlarge
@@ -31,20 +31,35 @@ export default class DetailScreen extends Component {
                         source={{ uri: itemData.owner.avatar_url }}
                         activeOpacity={0.7}
                     />
-                    <Text style={{ marginTop: 20, marginBottom: 20, fontSize: 30 }}>{itemData.name}</Text>
-                    <View>
-                        <Text>{itemData.id}</Text>
-                        <Text>{itemData.node_id}</Text>
-                        <Text>{itemData.full_name}</Text>
-                        <Text>{itemData.owner.url}</Text>
-                        <Text>{itemData.owner.html_url}</Text>
-                        <Text>{itemData.owner.type}</Text>
-                        <Text>{itemData.description}</Text>
-                        <Text>{itemData.created_at}</Text>
-                        <Text>{itemData.language}</Text>
+                    <Text style={styles.textNameStyle}>{itemData.name}</Text>
+                    <View style={{paddingLeft: 40, paddingRight: 40}}>
+                        <Text>Number: {itemData.id}</Text>
+                        {/* <Text>{itemData.node_id}</Text> */}
+                        {/* <Text>{itemData.full_name}</Text> */}
+                        {/* <Text>{itemData.owner.url}</Text> */}
+                        <Text>Website: {itemData.owner.html_url}</Text>
+                        <Text>Type: {itemData.owner.type}</Text>
+                        <Text>Description: {itemData.description}</Text>
+                        {/* <Text>{itemData.created_at}</Text> */}
+                        {/* <Text>{itemData.language}</Text> */}
                     </View>
                 </View>
             </View>
         )
     }
 }
+
+const styles = StyleSheet.create({
+    detailStyle: { 
+        flex: 1, 
+        backgroundColor: "#FFF", 
+        paddingTop: 100,
+        // justifyContent: 'center', 
+        alignItems: 'center' 
+    },
+    textNameStyle: { 
+        marginTop: 20, 
+        marginBottom: 20, 
+        fontSize: 30 
+    }
+})
